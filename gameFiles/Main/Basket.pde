@@ -1,3 +1,3 @@
-class Basket extends ForceObject {
+class Basket {
   
 }
