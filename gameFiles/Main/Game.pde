@@ -21,7 +21,7 @@ class Game {
   }
 
   void generateNewRound() {
-    String randBgr = bgrImgs.values().get((int)random(bgrImgs.size()));
+    String randBgr = bgrImgs.values().stream().skip((int) (random(bgrImgs.size()))).findFirst().orElse(null);
     setting.applySetting(randBgr);
     setting.draw();
     mod.randomizeMods();

@@ -1,5 +1,6 @@
 import fisica.*;
 
+
 FWorld world;
 void setup() {
   size(1300, 600);
