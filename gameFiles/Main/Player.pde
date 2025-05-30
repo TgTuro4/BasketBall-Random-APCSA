@@ -1,5 +1,6 @@
 class Player extends A0ForceObject {
   float w, h;
+  Arm arm;
   public Player(PVector position, double mass, double gravity, float w, float h) {
     super(position, mass, gravity);
     this.w = w;
@@ -10,6 +11,18 @@ class Player extends A0ForceObject {
       TO DO LIST:
       use FCompound and put a circle + heavy square inside of the bottom so that it gravitates towards standing upright like a mighty bean
     */
+    FCompound body = new FCompound();
+    FCircle base = new FCircle(1);
+    FBox weight = new FBox(8, 25);
+    body.addBody(base);
+    body.addBody(weight);
+    weight.setDensity(50);
+    base.setDensity(1);
+    base.setFriction(0.2);
+    
+    
+    
+    
   }
   
   public void updateObject() {
@@ -22,6 +35,7 @@ class Player extends A0ForceObject {
     rotate(object.getRotation());
    
     rect(0, 0, w, h);
+    
     
     popMatrix();
   }

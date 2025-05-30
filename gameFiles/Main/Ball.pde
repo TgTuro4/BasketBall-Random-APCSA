@@ -6,6 +6,7 @@ class Ball extends A0ForceObject {
     this.object = new FCircle(radius * 2);
     object.setPosition(position.x, position.y);
     object.setRestitution(0.8);
+    object.setDensity((float)mass / 10);
   }
   public void updateObject() {
     copyPhysicalState();

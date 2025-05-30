@@ -2,7 +2,7 @@ class Game {
    Integer round;
    Integer[] score;
    Player[] players;
-   Setting setting;
+   //Setting setting;
    Ball ball;
    AnimationHandler animHandler;
    
