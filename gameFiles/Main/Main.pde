@@ -39,6 +39,6 @@ void draw() {
   rect(0, height-40, width, 40);
   rectMode(CENTER);
   player.draw();
-  player.arm.draw();
+  // player.arm.draw();
   ball.draw();
 }
