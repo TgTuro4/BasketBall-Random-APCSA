@@ -77,5 +77,23 @@ class Player extends A0ForceObject {
     rect(0, h * 5, w * 0.1, h * 0.05);
     popMatrix();
     arm.draw();
+
+    PImage shirtSheet = loadImage("../imgs/tshirt-sheet0scaled.png");
+    PImage shirt = shirtSheet.get(0, 440, 60, 110);
+
+    PImage shortSheet = loadImage("../imgs/rightshort-sheet0scaled.png");
+    PImage shorts = shortSheet.get(0,130,60,130);
+
+
+
+    image(shirt, 50, 50);
+    image(shorts, 50, 160);
+
+
+
+
+
+
+
   }
 }

@@ -4,8 +4,13 @@ FWorld world;
 Player player;
 Ball ball;
 
+// void settings() {
+//   noSmooth(); //renders pngs correctly
+// }
+
 void setup() {
-  size(800, 600);
+  noSmooth();
+  size(800, 600, P2D);
   Fisica.init(this);
 
   world = new FWorld();
