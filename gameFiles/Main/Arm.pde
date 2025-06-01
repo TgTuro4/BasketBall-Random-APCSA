@@ -3,6 +3,7 @@ class Arm extends A0ForceObject {
   FCircle hand = new FCircle(20);
   Player player;
   boolean swinging;
+
   public Arm(Player attachedPlayer, float armLength, float attachX, float attachY) {
     super(attachedPlayer.pos.copy(), attachedPlayer.mass * 0.2, 0);
     this.w = attachedPlayer.w * 0.6;
@@ -18,30 +19,26 @@ class Arm extends A0ForceObject {
     hand.setSensor(true);
     hand.setRestitution(0);
   }
-  void swing() { // not yet functional
-    if (swinging) {
-      object.setAngularVelocity(1.5);
-    } else {
-      if (abs(object.getRotation()) > 0.05) {
-        float movement;
-        if (object.getRotation() > 0) {
-          movement = -1;
-        }
-        else {
-          movement = 1;
-        }  
-      }
-      else {
-        object.setAngularVelocity(0);
-        object.setRotation(0);
-      }
-    }
+  
+  void swing() {
+    object.setAngularVelocity(5);
+    if (object.getRotation() > player.object.getRotation() + PI)
+      object.setAngularVelocity(0);
   }
-void updateObject() { // hand positioning
+
+  void updateObject() { // hand positioning
+    if (keyPressed == true && key == 'w') {
+      swing();
+    } else if (object.getRotation() == player.object.getRotation()) {
+      object.setAngularVelocity(0);
+    } else {
+      object.setAngularVelocity(-5);
+    }
     float handX = object.getX() + cos(object.getRotation()) * armLength * 0.4;
     float handY = object.getY() + sin(object.getRotation()) * armLength * 0.4;
     hand.setPosition(handX, handY);
-}
+  }
+
   void draw(){
     pushMatrix();
     translate(object.getX(), object.getY());

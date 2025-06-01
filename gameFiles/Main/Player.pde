@@ -76,5 +76,6 @@ class Player extends A0ForceObject {
     fill(50, 50, 50); //weight
     rect(0, h * 5, w * 0.1, h * 0.05);
     popMatrix();
+    arm.draw();
   }
 }
