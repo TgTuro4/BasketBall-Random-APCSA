@@ -1,5 +1,4 @@
 class Game {
-<<<<<<< HEAD
   int round;
   int[] score;
   Player[] players;
@@ -22,7 +21,7 @@ class Game {
   }
 
   void generateNewRound() {
-    String randBgr = bgrImgs.values().get((int)random(bgrImgs.size()));
+    String randBgr = bgrImgs.values().stream().skip((int) (random(bgrImgs.size()))).findFirst().orElse(null);
     setting.applySetting(randBgr);
     setting.draw();
     mod.randomizeMods();
@@ -33,22 +32,4 @@ class Game {
   }
   void score() {
   }
-=======
-   Integer round;
-   Integer[] score;
-   Player[] players;
-   //Setting setting;
-   Ball ball;
-   AnimationHandler animHandler;
-   
-   void tick() {
-      // 
-   }
-   void reset() {
-      // 
-   }
-   void score() {
-      // 
-   }
->>>>>>> forceobject
 }
