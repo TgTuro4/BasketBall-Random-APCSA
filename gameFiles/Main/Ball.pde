@@ -11,7 +11,6 @@ class Ball extends A0ForceObject {
   }
   public void updateObject() {
     copyPhysicalState();
-    if (this.vel.y < 0.15) this.vel.y = 0; // attempt to fix jittering when ball is on the ground, doesn't work.
   }
   public void draw() {
      fill(0, 255, 0);

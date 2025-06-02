@@ -1,5 +1,5 @@
 class Arm extends A0ForceObject {
-  float armLength, w, angle; // angle is handled in radians for all code
+  float armLength, w; // angle is handled in radians for all code
   FCircle hand = new FCircle(20);
   Player player;
   boolean swinging;
@@ -10,6 +10,7 @@ class Arm extends A0ForceObject {
     this.armLength = armLength;
     
     this.object = new FBox((float)w, (float)armLength);
+    object.setDensity(0.1);
     object.setPosition(
       attachedPlayer.object.getX() + attachX, 
       attachedPlayer.object.getY() + attachY + armLength / 2
