@@ -1,5 +1,5 @@
 class Modification {
-  private double ballMass, gravity, basketHeight, armLength;
+  private float ballMass, gravity, basketHeight, armLength;
   private String description;
   private Player[] players;
   private Basket[] baskets;
@@ -26,8 +26,8 @@ class Modification {
     for (Basket basket: baskets) { 
       basket.height = basketHeight;
     }
-    ball.mass = mass;
-    A0ForceObject.gravity = gravity;
+    ball.mass = ballMass;
+    //A0ForceObject.gravity = gravity;
   }
   
   public String toString() {
