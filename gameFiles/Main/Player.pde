@@ -18,15 +18,15 @@ class Player extends A0ForceObject {
     base.setPosition(0, 0);
     base.setDensity((float)mass * 0.1 / (PI * w * w));
     ((FCompound)object).addBody(base);
-    
+    /* problem: head has weight no matter what
     FCircle head = new FCircle(w * 0.9);
     head.setPosition(0, -h * 0.9);
-    head.setDensity((float)mass * 0.1 / (PI * w * w));
-    ((FCompound)object).addBody(base);
-    
+    head.setSensor(false);
+    ((FCompound)object).addBody(head);
+    */
     FBox weight = new FBox(w * 0.4, h * 0.4); // ** outside of and below the player, heavy to make the player balance. NOTE: balances somewhat slowly when within 30 degrees of standing upright.
-    weight.setPosition(0, h * 5);
-    weight.setDensity(500.0);
+    weight.setPosition(0, h * 5.5); //0, h * 5
+    weight.setDensity(1000.0);
     weight.setSensor(true);
     weight.setRestitution(0);
     ((FCompound)object).addBody(weight);
@@ -44,9 +44,9 @@ class Player extends A0ForceObject {
     armJoint.setCollideConnected(false);
     armJoint.setMaxMotorTorque(1000); // could be useful later
    
-    torso.setGroupIndex(-1); base.setGroupIndex(-1); weight.setGroupIndex(-1); head.setGroupIndex(-1); // no self-collision
-   
-   
+    torso.setGroupIndex(-1); base.setGroupIndex(-1); weight.setGroupIndex(-1);  // head.setGroupIndex(-1); // no self-collision
+
+
     object.setPosition(position.x, position.y);
   }
   

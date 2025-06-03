@@ -29,9 +29,9 @@ class Arm extends A0ForceObject {
   void updateObject() { // hand positioning
     if (keyPressed == true && key == 'w') {
       swing();
-    } else if (object.getRotation() == player.object.getRotation()) {
+    } else if (object.getRotation() < 0.05) {
       object.setAngularVelocity(0);
-    } else {
+    } else if (object.getRotation() > player.object.getRotation() + 0.05) {
       object.setAngularVelocity(-5);
     }
     float handX = object.getX() + cos(object.getRotation()) * armLength * 0.4;
