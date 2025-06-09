@@ -1,7 +1,8 @@
-class Basket {
+class Basket extends A0ForceObject {
    public double height;
-   public Basket() {
-     height = 0; 
-   }
+   FCompound basket = new FCompound();
+   FCircle outerBasket = new FCircle(10);
+   FBox innerBasket = new FBox(10, 50);
+   
    
 }
