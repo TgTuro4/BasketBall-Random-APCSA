@@ -19,7 +19,10 @@ void setup() {
 
   world = new FWorld();
   world.setGravity(0, 1000);
-  game = new Game(player, player0, player1, player2, ball);
+
+
+  ball = new Ball(new PVector(width/2, 100), 1, 20.0); // ball b4 players
+  game = new Game(players, ball);
   
   setting = new Setting("../Images/courtBackground.png");
   
@@ -39,7 +42,6 @@ void setup() {
 }
 
 void creation() {
-  ball = new Ball(new PVector(width/2, 100), 1, 20.0); // ball b4 players
   world.add(ball.object);
 
   player = new Player(new PVector(width/1.2, height-300), 5.0, 60, 120, floor, 1, ball);
@@ -76,6 +78,8 @@ void creation() {
   rightBasket = new Basket(600 + heightChanger, true);
   leftTarget = new PVector(leftPos.x, leftPos.y + 70);
   rightTarget = new PVector(rightPos.x, rightPos.y + 70);
+  
+  game.mod.applyMods();
 }
 
 
@@ -147,4 +151,5 @@ void draw() {
   textSize(32);
   textAlign(LEFT, TOP);
   text("Score: " + game.score[0] + " - " + game.score[1], 10, 10);
+  text("Active Modifications: " + game.mod, 10, 40);
 }

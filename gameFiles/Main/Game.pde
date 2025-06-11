@@ -11,6 +11,12 @@ class Game {
     players = new Player[]{player, player1, player2, player3};
     mod = new Modification(players, ball);
   }
+
+  public Game(Player[] players, Ball ball) {
+    score = new int[2];
+    this.players = players;
+    mod = new Modification(players, ball);
+  }
   
   void reset() {
     mod.randomizeMods();
