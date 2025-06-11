@@ -3,11 +3,13 @@ class Basket extends A0ForceObject {
   FCircle outerBasket;
   FBox innerBasket;
   FCompound object;
+  boolean isLeft;
 
-  public Basket(PVector position, float radius, float h) {
+  public Basket(PVector position, float radius, float h, boolean isLeft) {
     super(position, 0);
     this.radius = radius;
     this.h = h;
+    this.isLeft = isLeft;
 
     outerBasket = new FCircle(radius * 2);
     outerBasket.setPosition(0, 0);
@@ -28,12 +30,14 @@ class Basket extends A0ForceObject {
   }
 
   public void draw() {
-    fill(200, 100, 0); 
-    float x = object.getX();
-    float y = object.getY();
-
-    ellipse(x, y, radius * 2, radius * 2);
+    fill(150, 75, 0);
     rectMode(CENTER);
-    rect(x, y + h / 2, radius * 2, h); 
+    rect(pos.x, pos.y, radius * 4, h);
+    if (isLeft) {
+      ellipse(pos.x + radius * 6, pos.y - h / 3, radius * 12, radius * 1.5);
+    } else {
+      ellipse(pos.x - radius * 6, pos.y - h / 3, radius * 12, radius * 1.5);
+    }
+    rectMode(CORNER);
   }
 }
