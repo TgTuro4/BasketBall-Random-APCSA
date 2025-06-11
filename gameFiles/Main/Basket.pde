@@ -1,39 +1,26 @@
-class Basket extends A0ForceObject {
+class Basket {
   float radius, h;
   FCircle outerBasket;
-  FBox innerBasket;
-  FCompound object;
-
-  public Basket(PVector position, float radius, float h) {
-    super(position, 0);
-    this.radius = radius;
+  boolean isRight;
+  PVector position;
+  
+  public Basket(PVector position, float h, boolean isRight) {
+    this.position = position;
     this.h = h;
-
-    outerBasket = new FCircle(radius * 2);
-    outerBasket.setPosition(0, 0);
-
-    innerBasket = new FBox(radius * 2, h);
-    innerBasket.setPosition(0, h / 2);
-
-    object = new FCompound();
-    object.addBody(outerBasket);
-    object.addBody(innerBasket);
-    object.setPosition(position.x, position.y);
-    object.setStatic(true);
-    object.setGroupIndex(1);
-  }
-
-  public void updateObject() {
-    copyPhysicalState();
+    this.isRight = isRight;
   }
 
   public void draw() {
-    fill(200, 100, 0); 
-    float x = object.getX();
-    float y = object.getY();
+    pushMatrix();
+    PImage basketImg = loadImage("../Images/basketballRim.png");
 
-    ellipse(x, y, radius * 2, radius * 2);
-    rectMode(CENTER);
-    rect(x, y + h / 2, radius * 2, h); 
+    if (isRight) { // false -> left | true -> right
+      scale(-1, 1);
+      image(basketImg, -width, height -  h, 100, 100);
+    }
+    else {
+      image(basketImg, 0 , height - h, 100, 100);
+    }
+    popMatrix();
   }
 }

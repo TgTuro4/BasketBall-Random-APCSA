@@ -6,11 +6,7 @@ class Game {
   Ball ball;
   AnimationHandler animHandler;
   Modification mod;
-
-  final HashMap<String, String> bgrImgs = new HashMap<>();
-  // add background images to hashmap...
-  // hashMap.put("","");
-
+  
   void tick() {
     for (Player p: players) {
       p.updateObject();
@@ -21,9 +17,6 @@ class Game {
   }
 
   void generateNewRound() {
-    String randBgr = bgrImgs.values().stream().skip((int) (random(bgrImgs.size()))).findFirst().orElse(null);
-    setting.applySetting(randBgr);
-    setting.draw();
     mod.randomizeMods();
   }
 

@@ -43,7 +43,7 @@ class Player extends A0ForceObject {
     
     weight = new FBox(w * 2, h * 2); // ** outside of and below the player, heavy to make the player balance. NOTE: balances somewhat slowly when within 30 degrees of standing upright. 0.4 0.4
     weight.setPosition(0, h);
-    weight.setDensity(5.0);
+    weight.setDensity(2.0);
     weight.setSensor(true);
     weight.setRestitution(0);
     ((FCompound)object).addBody(weight);
@@ -80,7 +80,6 @@ class Player extends A0ForceObject {
    
    
    // // //
-   object.setAngularDamping(10); //
    object.setGroupIndex(-1);
     object.setPosition(position.x, position.y);
   }
@@ -98,19 +97,19 @@ class Player extends A0ForceObject {
     if (isGrounded) {
       if (keyTracker[keyType] == true) {
         object.setAngularVelocity(0);
-        object.addImpulse(20000 * sin(object.getRotation()), -20000 * cos(object.getRotation()));
+        object.addImpulse(25000 * sin(object.getRotation()), -25000 * cos(object.getRotation()));
       }
-
-      if (!wasGrounded) {
+    }
+    
+      if (!wasGrounded && isGrounded) {
         float dir = object.getRotation() > 0 ? -1 : 1;
         if (abs(object.getRotation()) < 0.8)
           object.addTorque(dir * 30000);
-      }
     }
-    wasGrounded = isGrounded; // detects if landing is fresh or persistent, applies sway only when fresh.
     
+    wasGrounded = isGrounded; // detects if landing is fresh or persistent, applies sway only when fresh.
     // getting, throwing in other method shoot()
-    if (this.arm.hand.isTouchingBody(this.ball.object) && millis() > cooldown && (ball.holdingPlayer != this)) { // picking up
+    if (this.arm.hand.isTouchingBody(this.ball.object) && millis() > cooldown && (ball.holdingPlayer != this)) { // picking upAdd commentMore actions
       if (ball.holdingPlayer != null) {
         ball.holdingPlayer.held = null;
         ball.holdingPlayer.cooldown = millis() + 500;
@@ -144,7 +143,7 @@ class Player extends A0ForceObject {
       PVector origin = new PVector(arm.hand.getX(), arm.hand.getY());
       PVector dir = PVector.sub(target, origin); // change to basket coords
       dir.normalize();
-      held.object.setVelocity(dir.x * 1000, dir.y * 1000);
+      held.object.setVelocity(dir.x * 1200, dir.y * 1200);
       held = null;
       cooldown = millis() + 500;
     }
@@ -158,7 +157,7 @@ class Player extends A0ForceObject {
     pushMatrix();
     translate(pos.x, pos.y);
     rotate(object.getRotation());
-   
+     
     fill(0, 0, 255, 150); //torso
     rect(0, -h * 0.4, w * 0.5, h * 0.8); // prev 0.8 w
     
