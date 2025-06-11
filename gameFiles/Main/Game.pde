@@ -20,7 +20,7 @@ class Game {
   void score(int team) {
     if (team == 0) {
       score[0]++;
-    } else {
+    } else if (team == 1) {
       score[1]++;
     }
   }

@@ -35,7 +35,7 @@ void setup() {
   world.add(floor);
   creation();
   world.setEdges();
-  world.remove(world.top);
+  world.top.setGroupIndex(-1);
 }
 
 void creation() {
@@ -98,7 +98,7 @@ void checkBasket() {
       world.remove(selectedPlayer.object);
     }
     creation();
-    world.setEdges(); world.remove(world.top);
+    world.setEdges();
   }
   game.score(returnVal);
 }
