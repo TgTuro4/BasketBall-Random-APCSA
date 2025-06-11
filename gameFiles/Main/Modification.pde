@@ -24,10 +24,9 @@ class Modification {
       player.arm.armLength = armLength;
     }
     for (Basket basket: baskets) { 
-      basket.height = basketHeight;
+      basket.h = basketHeight;
     }
     ball.mass = ballMass;
-    //A0ForceObject.gravity = gravity;
   }
   
   public String toString() {

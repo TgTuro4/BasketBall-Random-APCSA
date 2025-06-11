@@ -1,8 +1,8 @@
 class Ball extends A0ForceObject {
-  float radius; //<>//
+  float radius; //<>// //<>//
   Player player;
-  public Ball(PVector position, double mass, double gravity, float radius) {
-    super(position, mass, gravity);
+  public Ball(PVector position, double mass, float radius) {
+    super(position, mass);
     this.radius = radius;
     this.object = new FCircle(radius * 2);
     object.setPosition(position.x, position.y);

@@ -6,8 +6,8 @@ class Player extends A0ForceObject {
   FBox floor;
   int keyType;
   boolean wasGrounded;
-  public Player(PVector position, double mass, double gravity, float w, float h, FBox floor, int keyType) {
-    super(position, mass, gravity);
+  public Player(PVector position, double mass, float w, float h, FBox floor, int keyType) {
+    super(position, mass);
     this.w = w;
     this.h = h;
     this.object = new FCompound();
