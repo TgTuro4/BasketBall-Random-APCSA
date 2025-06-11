@@ -1,11 +1,11 @@
 import fisica.*;
 
-
 FWorld world;
 Player player, player2;
 Ball ball;
 public boolean[] keyTracker = new boolean[2];
 FBox floor;
+Basket basket;
 
 void setup() {
   size(1000, 600); // 800 600
@@ -39,6 +39,9 @@ void setup() {
   world.add(player2.arm.object);
   world.add(player2.arm.hand);
   player2.jointAddition(world);
+  
+  basket = new Basket(new PVector(10,600), 10, 40);
+  world.add(basket.object);
 }
 
 void keyPressed() {
@@ -73,4 +76,5 @@ void draw() {
   player.draw();
   player2.draw();
   ball.draw();
+  basket.draw();
 }
