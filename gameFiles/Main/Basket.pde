@@ -4,10 +4,15 @@ class Basket {
   boolean isRight;
   PVector position;
   
-  public Basket(PVector position, float h, boolean isRight) {
-    this.position = position;
+  public Basket(float h, boolean isRight) {
     this.h = h;
     this.isRight = isRight;
+    if (isRight) {
+      position = new PVector(width - 50, height - h + 25);
+    }
+    else {
+      position = new PVector(50, height - h + 25); 
+    }
   }
 
   public void draw() {
@@ -22,5 +27,6 @@ class Basket {
       image(basketImg, 0 , height - h, 100, 100);
     }
     popMatrix();
+    ellipse(position.x, position.y, 20, 20);
   }
 }

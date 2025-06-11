@@ -1,7 +1,7 @@
 class Player extends A0ForceObject {
   float w, h;
   Arm arm;
-  FRevoluteJoint armJoint, swayPartJoint;
+  FRevoluteJoint armJoint;
   FCircle base, head, swayPart; FBox weight, torso;
   FBox floor;
   Ball held, ball;
@@ -68,16 +68,6 @@ class Player extends A0ForceObject {
    
     // // //
    
-    swayPart = new FCircle(5);
-    swayPart.setPosition(position.x, position.y - h * 0.9);
-    swayPart.setDensity(0.01);
-    swayPartJoint = new FRevoluteJoint(swayPart, object);
-    swayPartJoint.setAnchor(position.x, position.y -h * 0.9);
-    swayPartJoint.setEnableLimit(true);
-    swayPartJoint.setLowerAngle(-0.1);
-    swayPartJoint.setUpperAngle(0.1);
-    swayPartJoint.setCollideConnected(false);
-   
    
    // // //
    object.setGroupIndex(-1);
@@ -87,7 +77,6 @@ class Player extends A0ForceObject {
   public void jointAddition(FWorld world) {
     world.add(this.armJoint);
     world.add(this.swayPart);
-    world.add(this.swayPartJoint);
   }
   
   public void updateObject() {
@@ -101,10 +90,9 @@ class Player extends A0ForceObject {
       }
     }
     
-      if (!wasGrounded && isGrounded) {
+      if (!wasGrounded && isGrounded && (abs(object.getRotation()) < 0.8)) {
         float dir = object.getRotation() > 0 ? -1 : 1;
-        if (abs(object.getRotation()) < 0.8)
-          object.addTorque(dir * 30000);
+        object.addTorque(dir * 40000);
     }
     
     wasGrounded = isGrounded; // detects if landing is fresh or persistent, applies sway only when fresh.
