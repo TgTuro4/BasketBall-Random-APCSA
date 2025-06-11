@@ -1,11 +1,11 @@
 class Arm extends A0ForceObject {
   float armLength, w; // angle is handled in radians for all code
-  FCircle hand = new FCircle(20);
+  FCircle hand = new FCircle(90);
   Player player;
   boolean swinging;
   int keyType;
   public Arm(Player attachedPlayer, float armLength, float attachX, float attachY) {
-    super(attachedPlayer.pos.copy(), attachedPlayer.mass * 0.2, 0);
+    super(attachedPlayer.pos.copy(), attachedPlayer.mass * 0.2);
     this.w = attachedPlayer.w * 0.5;
     this.player = attachedPlayer;
     this.armLength = armLength;
@@ -35,8 +35,8 @@ class Arm extends A0ForceObject {
     } else if (object.getRotation() > player.object.getRotation() + 0.05) {
       object.setAngularVelocity(-8 * (keyType * 2 - 1));
     }
-    float handX = object.getX() + cos(object.getRotation()) * armLength * 0.4;
-    float handY = object.getY() + sin(object.getRotation()) * armLength * 0.4;
+    float handX = player.armJoint.getAnchorX() + cos(object.getRotation() + PI / 2) * armLength * 0.75;
+    float handY = player.armJoint.getAnchorY() + sin(object.getRotation() + PI / 2) * armLength * 0.75;
     hand.setPosition(handX, handY);
   }
   void draw(){
@@ -49,7 +49,7 @@ class Arm extends A0ForceObject {
     rect(0, 0, w * 0.6, armLength);
     
     fill(255, 0, 0, 50);
-    ellipse(0, armLength * 0.4, w*1.5, w*1.5);
+    ellipse(0, armLength * 0.4, 90, 90);
     
     popMatrix();
   }

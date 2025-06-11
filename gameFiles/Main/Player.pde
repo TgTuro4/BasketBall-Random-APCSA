@@ -4,15 +4,20 @@ class Player extends A0ForceObject {
   FRevoluteJoint armJoint, swayPartJoint;
   FCircle base, head, swayPart; FBox weight, torso;
   FBox floor;
+  Ball held, ball;
   int keyType;
   boolean wasGrounded;
-  public Player(PVector position, double mass, double gravity, float w, float h, FBox floor, int keyType) {
-    super(position, mass, gravity);
+  boolean wasPressed;
+  int cooldown = 0;
+  public Player(PVector position, double mass, float w, float h, FBox floor, int keyType, Ball ball) {
+    super(position, mass);
     this.w = w;
     this.h = h;
     this.object = new FCompound();
     this.floor = floor;
     this.keyType = keyType;
+    this.ball = ball;
+    this.held = null;
     this.wasGrounded = false;
     
     torso = new FBox(w * 0.5, h * 0.8); // prev 0.8
@@ -34,15 +39,15 @@ class Player extends A0ForceObject {
     
     weight = new FBox(w * 2, h * 2); // ** outside of and below the player, heavy to make the player balance. NOTE: balances somewhat slowly when within 30 degrees of standing upright. 0.4 0.4
     weight.setPosition(0, h);
-    weight.setDensity(20.0);
+    weight.setDensity(5.0);
     weight.setSensor(true);
     weight.setRestitution(0);
     ((FCompound)object).addBody(weight);
     
     this.arm = new Arm(this, h * 0.7, 0, -h * 0.8); //
     
-    armJoint = new FRevoluteJoint(this.object, arm.object); // //<>//
-    armJoint.setAnchor(this.object.getX(), this.object.getY() + -h * 0.7);
+    armJoint = new FRevoluteJoint(this.object, arm.object); //
+    armJoint.setAnchor(this.object.getX(), this.object.getY() + -h * 0.7); // useful values
     armJoint.setEnableLimit(true);
     
     if (keyType == 0) { // 'w'
@@ -60,10 +65,10 @@ class Player extends A0ForceObject {
    // // //
    
    swayPart = new FCircle(5);
-   swayPart.setPosition(position.x, position.y - h * 0.95);
+   swayPart.setPosition(position.x, position.y - h * 0.9);
    swayPart.setDensity(0.01);
    swayPartJoint = new FRevoluteJoint(swayPart, object);
-   swayPartJoint.setAnchor(position.x, position.y -h * 0.95);
+   swayPartJoint.setAnchor(position.x, position.y -h * 0.9);
    swayPartJoint.setEnableLimit(true);
    swayPartJoint.setLowerAngle(-0.1); swayPartJoint.setUpperAngle(0.1);
    swayPartJoint.setCollideConnected(false);
@@ -71,6 +76,7 @@ class Player extends A0ForceObject {
    
    // // //
    object.setAngularDamping(10); //
+   object.setGroupIndex(-1);
     object.setPosition(position.x, position.y);
   }
   
@@ -82,22 +88,61 @@ class Player extends A0ForceObject {
   
   public void updateObject() {
     copyPhysicalState();
+    boolean isPressed = keyTracker[keyType];
     boolean isGrounded = grounded(); // JUMP
     if (isGrounded) {
-      print("grounded");
+      //print("grounded");
       if (keyTracker[keyType] == true) {
         object.addImpulse(20000 * sin(object.getRotation()), -20000 * cos(object.getRotation()));
       }
     }
-    print(".");
+    //print(".");
     
     if (isGrounded && !wasGrounded) { // SWAY
       float swayDirection = random(0, 1) > 0.5 ? 1 : -1;
-      swayPart.addImpulse((float)swayDirection * 10000, 0);
+      swayPart.addImpulse((float)swayDirection * 1000000, 0);
     }
-    
     wasGrounded = isGrounded; // detects if landing is fresh or persistent, applies sway only when fresh.
+    
+    // getting, throwing in other method shoot()
+    if (this.arm.hand.isTouchingBody(this.ball.object) && millis() > cooldown && (ball.holdingPlayer != this)) { // picking up
+      if (ball.holdingPlayer != null) {
+        ball.holdingPlayer.held = null;
+        ball.holdingPlayer.cooldown = millis() + 500;
+      }
+      held = ball;
+      ball.holdingPlayer = this;
+      ball.object.setStatic(true);
+      ball.object.setSensor(true);
+      ball.object.setPosition(arm.hand.getX(), arm.hand.getY() - 20);
+    }
+    if (held != null) {
+      ball.object.setStatic(true);
+      ball.object.setSensor(true);
+      held.object.setPosition(arm.hand.getX(), arm.hand.getY() - 20); 
+    }
+    wasPressed = isPressed;
+    // debug
+    //float d = dist(arm.hand.getX(), arm.hand.getY(), ball.object.getX(), ball.object.getY());
+    //println("Distance to ball:", d);
+    //println(held);
+    //print(held);
     arm.updateObject();
+  }
+  
+  public void shoot(PVector target) {
+    if ((held != null)) {
+      print("threw");
+      ball.holdingPlayer = null;
+      held.object.setStatic(false);
+      held.object.setSensor(false);
+      PVector origin = new PVector(arm.hand.getX(), arm.hand.getY());
+      PVector dir = PVector.sub(target, origin); // change to basket coords
+      dir.normalize();
+      held.object.setVelocity(dir.x * 1000, dir.y * 1000);
+      held = null;
+      cooldown = millis() + 500;
+    }
   }
   
   boolean grounded() {
