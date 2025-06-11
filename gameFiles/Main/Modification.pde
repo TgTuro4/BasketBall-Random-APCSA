@@ -1,31 +1,27 @@
 class Modification {
-  private float ballMass, gravity, basketHeight, armLength;
+  private float ballMass, basketHeightChanger, armLengthChanger;
   private String description;
   private Player[] players;
-  private Basket[] baskets;
   private Ball ball;
   
-  public Modification(Player[] players, Basket[] baskets, Ball ball) {
+  public Modification(Player[] players, Ball ball) {
     this.players = players;
-    this.baskets = baskets;
     this.ball = ball;
     randomizeMods();
   }
   
   public void randomizeMods() {
     ballMass = random(1.0, 3.5);
-    gravity = random(6.0, 12.0);
-    basketHeight = random(2.7, 3.7);
-    description = String.format("ball mass: %d\ngravity: %d\nbasket height: %d", ballMass, gravity, basketHeight);
+    basketHeightChanger = random(-200, 200);
+    armLengthChanger = random(0.6,0.8);
+    description = String.format("ball mass: %f\nbasket height change: %f\n arm length: %f", ballMass, basketHeightChanger, armLengthChanger);
   }
   
   public void applyMods() { 
     for (Player player: players) {
-      player.arm.armLength = armLength;
+      player.arm.armLength = player.arm.armLength * armLengthChanger;
     }
-    for (Basket basket: baskets) { 
-      basket.h = basketHeight;
-    }
+    heightChanger = basketHeightChanger;
     ball.mass = ballMass;
   }
   

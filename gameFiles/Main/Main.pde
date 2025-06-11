@@ -1,6 +1,7 @@
 import fisica.*;
 
 FWorld world;
+Game game;
 Player player, player0, player1, player2;
 Ball ball;
 public boolean[] keyTracker = new boolean[2];
@@ -9,6 +10,7 @@ Basket leftBasket, rightBasket;
 Setting setting;
 PVector leftPos, leftTarget;
 PVector rightPos, rightTarget;
+float heightChanger = 0;
 
 void setup() {
   size(1200, 800); // 800 600
@@ -59,12 +61,13 @@ void setup() {
   world.add(player2.arm.hand);
   player2.jointAddition(world);
   
-  PVector leftPos = new PVector(0,-600);
-  PVector rightPos = new PVector(width, -600);
-  leftBasket = new Basket(leftPos, 600, false);
-  rightBasket = new Basket(rightPos, 600, true);
+  PVector leftPos = new PVector(0,-600 + heightChanger);
+  PVector rightPos = new PVector(width, -600 + heightChanger);
+  leftBasket = new Basket(leftPos, 600 + heightChanger, false);
+  rightBasket = new Basket(rightPos, 600 + heightChanger, true);
   leftTarget = new PVector(leftPos.x, leftPos.y + 70);
   rightTarget = new PVector(rightPos.x, rightPos.y + 70);
+  game = new Game(player, player0, player1, player2, ball);
 }
 
 void keyPressed() {
@@ -105,4 +108,9 @@ void draw() {
   ball.draw();
   leftBasket.draw();
   rightBasket.draw();
+  
+  fill(255);
+  textSize(32);
+  textAlign(LEFT, TOP);
+  text("Score: " + game.score[0] + " - " + game.score[1], 10, 10);
 }
