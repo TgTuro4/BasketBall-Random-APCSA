@@ -1,5 +1,6 @@
 class Ball extends A0ForceObject {
-  float radius;
+  float radius; //<>//
+  Player player;
   public Ball(PVector position, double mass, double gravity, float radius) {
     super(position, mass, gravity);
     this.radius = radius;
@@ -8,6 +9,7 @@ class Ball extends A0ForceObject {
     object.setRestitution(0.6);
     object.setFriction(0.2);
     object.setDensity((float)mass * 100 / (radius * radius));
+    object.setGroupIndex(1);
   }
   public void updateObject() {
     copyPhysicalState();

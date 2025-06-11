@@ -3,11 +3,13 @@ class Arm extends A0ForceObject {
   FCircle hand = new FCircle(20);
   Player player;
   boolean swinging;
+  int keyType;
   public Arm(Player attachedPlayer, float armLength, float attachX, float attachY) {
     super(attachedPlayer.pos.copy(), attachedPlayer.mass * 0.2, 0);
-    this.w = attachedPlayer.w * 0.6;
+    this.w = attachedPlayer.w * 0.5;
     this.player = attachedPlayer;
     this.armLength = armLength;
+    this.keyType = attachedPlayer.keyType; // swing & jump sync to the same key.
     
     this.object = new FBox((float)w, (float)armLength);
     object.setDensity(0.1);
@@ -15,34 +17,28 @@ class Arm extends A0ForceObject {
       attachedPlayer.object.getX() + attachX, 
       attachedPlayer.object.getY() + attachY + armLength / 2
     );
+    object.setGroupIndex(-1);
     
     hand.setSensor(true);
     hand.setRestitution(0);
   }
-  void swing() { // not yet functional
-    if (swinging) {
-      object.setAngularVelocity(1.5);
-    } else {
-      if (abs(object.getRotation()) > 0.05) {
-        float movement;
-        if (object.getRotation() > 0) {
-          movement = -1;
-        }
-        else {
-          movement = 1;
-        }  
-      }
-      else {
-        object.setAngularVelocity(0);
-        object.setRotation(0);
-      }
-    }
+  void swing() {
+    object.setAngularVelocity(8 * (keyType * 2 - 1)); // prev 5
+    //if (object.getRotation() > player.object.getRotation() + PI)
+      //object.setAngularVelocity(0);
   }
-void updateObject() { // hand positioning
+  void updateObject() { // hand positioning
+    if (keyTracker[keyType] == true) {
+      swing();
+    } else if (object.getRotation() < 0.05 && keyType == 0) {
+      object.setAngularVelocity(0);
+    } else if (object.getRotation() > player.object.getRotation() + 0.05) {
+      object.setAngularVelocity(-8 * (keyType * 2 - 1));
+    }
     float handX = object.getX() + cos(object.getRotation()) * armLength * 0.4;
     float handY = object.getY() + sin(object.getRotation()) * armLength * 0.4;
     hand.setPosition(handX, handY);
-}
+  }
   void draw(){
     pushMatrix();
     translate(object.getX(), object.getY());
@@ -50,7 +46,7 @@ void updateObject() { // hand positioning
     
     fill(0, 255, 0);
     rectMode(CENTER);
-    rect(0, 0, w, armLength);
+    rect(0, 0, w * 0.6, armLength);
     
     fill(255, 0, 0, 50);
     ellipse(0, armLength * 0.4, w*1.5, w*1.5);
