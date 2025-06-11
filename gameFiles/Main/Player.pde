@@ -1,62 +1,107 @@
 class Player extends A0ForceObject {
   float w, h;
   Arm arm;
-  FRevoluteJoint armJoint;
-  public Player(PVector position, double mass, double gravity, float w, float h) {
+  FRevoluteJoint armJoint, swayPartJoint;
+  FCircle base, head, swayPart; FBox weight, torso;
+  FBox floor;
+  int keyType;
+  boolean wasGrounded;
+  public Player(PVector position, double mass, double gravity, float w, float h, FBox floor, int keyType) {
     super(position, mass, gravity);
     this.w = w;
     this.h = h;
     this.object = new FCompound();
+    this.floor = floor;
+    this.keyType = keyType;
+    this.wasGrounded = false;
     
-    FBox torso = new FBox(w * 0.8, h * 0.8); //
+    torso = new FBox(w * 0.5, h * 0.8); // prev 0.8
     torso.setPosition(0, -h * 0.4);
     torso.setDensity((float)mass * 0.2 / (w * h));
     torso.setFill(0, 0, 255);
     ((FCompound)object).addBody(torso);
     
-    FCircle base = new FCircle(w * 0.81); // 
+    base = new FCircle(w * 0.5); //  prev 0.81
     base.setPosition(0, 0);
     base.setDensity((float)mass * 0.1 / (PI * w * w));
+    base.setFriction(0.5);
     ((FCompound)object).addBody(base);
-    /* problem: head has weight no matter what
-    FCircle head = new FCircle(w * 0.9);
+    
+    head = new FCircle(w * 0.55); // prev 0.9
     head.setPosition(0, -h * 0.9);
-    head.setSensor(false);
+    head.setDensity((float)mass * 0.1 / (PI * w * w));
     ((FCompound)object).addBody(head);
-    */
-    FBox weight = new FBox(w * 0.4, h * 0.4); // ** outside of and below the player, heavy to make the player balance. NOTE: balances somewhat slowly when within 30 degrees of standing upright.
-    weight.setPosition(0, h * 5.5); //0, h * 5
-    weight.setDensity(1000.0);
+    
+    weight = new FBox(w * 2, h * 2); // ** outside of and below the player, heavy to make the player balance. NOTE: balances somewhat slowly when within 30 degrees of standing upright. 0.4 0.4
+    weight.setPosition(0, h);
+    weight.setDensity(20.0);
     weight.setSensor(true);
     weight.setRestitution(0);
     ((FCompound)object).addBody(weight);
     
     this.arm = new Arm(this, h * 0.7, 0, -h * 0.8); //
-    ((FCompound)object).addBody(arm.object);
     
-    armJoint = new FRevoluteJoint(this.object, arm.object);
+    armJoint = new FRevoluteJoint(this.object, arm.object); // //<>//
     armJoint.setAnchor(this.object.getX(), this.object.getY() + -h * 0.7);
     armJoint.setEnableLimit(true);
     
-    armJoint.setLowerAngle(0);
-    armJoint.setUpperAngle(PI);
+    if (keyType == 0) { // 'w'
+       armJoint.setLowerAngle(PI);
+       armJoint.setUpperAngle(2 * PI);
+    }
+    else {
+      armJoint.setLowerAngle(0);
+      armJoint.setUpperAngle(PI); 
+    }
     
     armJoint.setCollideConnected(false);
-    armJoint.setMaxMotorTorque(1000); // could be useful later
+    armJoint.setMaxMotorTorque(1000);
    
-    torso.setGroupIndex(-1); base.setGroupIndex(-1); weight.setGroupIndex(-1);  // head.setGroupIndex(-1); // no self-collision
-
-
+   // // //
+   
+   swayPart = new FCircle(5);
+   swayPart.setPosition(position.x, position.y - h * 0.95);
+   swayPart.setDensity(0.01);
+   swayPartJoint = new FRevoluteJoint(swayPart, object);
+   swayPartJoint.setAnchor(position.x, position.y -h * 0.95);
+   swayPartJoint.setEnableLimit(true);
+   swayPartJoint.setLowerAngle(-0.1); swayPartJoint.setUpperAngle(0.1);
+   swayPartJoint.setCollideConnected(false);
+   
+   
+   // // //
+   object.setAngularDamping(10); //
     object.setPosition(position.x, position.y);
   }
   
-  public void armJointAddition(FWorld world) {
-    world.add(this.armJoint); 
+  public void jointAddition(FWorld world) {
+    world.add(this.armJoint);
+    world.add(this.swayPart);
+    world.add(this.swayPartJoint);
   }
   
   public void updateObject() {
     copyPhysicalState();
-    arm.updateObject(); // **
+    boolean isGrounded = grounded(); // JUMP
+    if (isGrounded) {
+      print("grounded");
+      if (keyTracker[keyType] == true) {
+        object.addImpulse(20000 * sin(object.getRotation()), -20000 * cos(object.getRotation()));
+      }
+    }
+    print(".");
+    
+    if (isGrounded && !wasGrounded) { // SWAY
+      float swayDirection = random(0, 1) > 0.5 ? 1 : -1;
+      swayPart.addImpulse((float)swayDirection * 10000, 0);
+    }
+    
+    wasGrounded = isGrounded; // detects if landing is fresh or persistent, applies sway only when fresh.
+    arm.updateObject();
+  }
+  
+  boolean grounded() {
+    return (object.isTouchingBody(floor)) && (object.getRotation() % (2 * PI) < PI * 1/4) && (object.getRotation() % (2 * PI) > PI * -1/4);
   }
   
   void draw() {
@@ -65,16 +110,15 @@ class Player extends A0ForceObject {
     rotate(object.getRotation());
    
     fill(0, 0, 255, 150); //torso
-    rect(0, -h * 0.4, w * 0.8, h * 0.8);
+    rect(0, -h * 0.4, w * 0.5, h * 0.8); // prev 0.8 w
     
-    fill(200, 200, 255, 150);//base
-    ellipse(0, 0, w * 0.81, w * 0.81);
+    if (grounded()) fill(200, 200, 255, 150);//base prev 0.81
+    if (!grounded()) fill(255, 100, 100, 200);
+    ellipse(0, 0, w * 0.51, w * 0.51);
     
-    fill(180, 180, 240, 200); // head
-    ellipse(0, -h * 0.9, w * 0.9, w * 0.9);
+    fill(180, 180, 240, 200); // head prev 0.9
+    ellipse(0, -h * 0.9, w * 0.51, w * 0.51);
     
-    fill(50, 50, 50); //weight
-    rect(0, h * 5, w * 0.1, h * 0.05);
     popMatrix();
     arm.draw();
   }
