@@ -31,10 +31,14 @@ class Player extends A0ForceObject {
     head.setPosition(0, -h * 0.9);
     head.setDensity((float)mass * 0.1 / (PI * w * w));
     ((FCompound)object).addBody(head);
+
+    for (FBody obj: new FBody[] {torso,base,head}) {
+      obj.setDensity(0);
+    }
     
     weight = new FBox(w * 2, h * 2); // ** outside of and below the player, heavy to make the player balance. NOTE: balances somewhat slowly when within 30 degrees of standing upright. 0.4 0.4
-    weight.setPosition(0, h);
-    weight.setDensity(20.0);
+    weight.setPosition(0, 5*h/8);
+    weight.setDensity(10.0);
     weight.setSensor(true);
     weight.setRestitution(0);
     ((FCompound)object).addBody(weight);
@@ -57,20 +61,21 @@ class Player extends A0ForceObject {
     armJoint.setCollideConnected(false);
     armJoint.setMaxMotorTorque(1000);
    
-   // // //
+    // // //
    
-   swayPart = new FCircle(5);
-   swayPart.setPosition(position.x, position.y - h * 0.95);
-   swayPart.setDensity(0.01);
-   swayPartJoint = new FRevoluteJoint(swayPart, object);
-   swayPartJoint.setAnchor(position.x, position.y -h * 0.95);
-   swayPartJoint.setEnableLimit(true);
-   swayPartJoint.setLowerAngle(-0.1); swayPartJoint.setUpperAngle(0.1);
-   swayPartJoint.setCollideConnected(false);
+    swayPart = new FCircle(5);
+    swayPart.setPosition(position.x, position.y - h * 0.95);
+    swayPart.setDensity(0.01);
+    swayPartJoint = new FRevoluteJoint(swayPart, object);
+    swayPartJoint.setAnchor(position.x, position.y -h * 0.95);
+    swayPartJoint.setEnableLimit(true);
+    swayPartJoint.setLowerAngle(-0.1);
+    swayPartJoint.setUpperAngle(0.1);
+    swayPartJoint.setCollideConnected(false);
    
    
-   // // //
-   object.setAngularDamping(10); //
+    // // //
+    // object.setAngularDamping(-1); //
     object.setPosition(position.x, position.y);
   }
   
@@ -84,19 +89,21 @@ class Player extends A0ForceObject {
     copyPhysicalState();
     boolean isGrounded = grounded(); // JUMP
     if (isGrounded) {
-      print("grounded");
       if (keyTracker[keyType] == true) {
+        object.setAngularVelocity(0);
         object.addImpulse(20000 * sin(object.getRotation()), -20000 * cos(object.getRotation()));
       }
+
+      if (!wasGrounded) {
+        float dir = object.getRotation() > 0 ? -1 : 1;
+        if (abs(object.getRotation()) < 0.8)
+          object.addTorque(dir * 30000);
+      }
     }
-    print(".");
-    
-    if (isGrounded && !wasGrounded) { // SWAY
-      float swayDirection = random(0, 1) > 0.5 ? 1 : -1;
-      swayPart.addImpulse((float)swayDirection * 10000, 0);
-    }
-    
-    wasGrounded = isGrounded; // detects if landing is fresh or persistent, applies sway only when fresh.
+
+    wasGrounded = isGrounded;
+
+
     arm.updateObject();
   }
   
