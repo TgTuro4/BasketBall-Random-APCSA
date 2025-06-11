@@ -1,5 +1,5 @@
 class Ball extends A0ForceObject {
-  float radius; //<>// //<>//
+  float radius; //<>// //<>// //<>//
   Player holdingPlayer;
   int time = millis();
   public Ball(PVector position, double mass, float radius) {
@@ -14,7 +14,7 @@ class Ball extends A0ForceObject {
   }
   public void updateObject() {
     copyPhysicalState();
-    println(holdingPlayer);
+    //println(holdingPlayer);
   }
   public void draw() {
      fill(100, 30, 30);

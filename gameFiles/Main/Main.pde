@@ -2,6 +2,7 @@ import fisica.*;
 
 FWorld world;
 Player player, player0, player1, player2;
+Player[] players = new Player[4];
 Ball ball;
 public boolean[] keyTracker = new boolean[2];
 FBox floor;
@@ -16,8 +17,6 @@ void setup() {
 
   world = new FWorld();
   world.setGravity(0, 1000);
-  world.setEdges();
-  world.remove(world.top);
   
   setting = new Setting("../Images/courtBackground.png");
   
@@ -31,29 +30,38 @@ void setup() {
   floor.setGroupIndex(0);
   floor.setGrabbable(false);
   world.add(floor);
+  creation();
+  world.setEdges();
+  world.remove(world.top);
+}
 
+void creation() {
   ball = new Ball(new PVector(width/2, 100), 1, 20.0); // ball b4 players
   world.add(ball.object);
 
   player = new Player(new PVector(width/1.2, height-300), 5.0, 60, 120, floor, 1, ball);
+  players[0] = player;
   world.add(player.object);
   world.add(player.arm.object);
   world.add(player.arm.hand);
   player.jointAddition(world);
   
   player0 = new Player(new PVector(width/1.4, height-300), 5.0, 60, 120, floor, 1, ball);
+  players[1] = player0;
   world.add(player0.object);
   world.add(player0.arm.object);
   world.add(player0.arm.hand);
   player0.jointAddition(world);
   
   player1 = new Player(new PVector(width - width/1.2, height-300), 5.0, 60, 120, floor, 0, ball);
+  players[2] = player1;
   world.add(player1.object);
   world.add(player1.arm.object);
   world.add(player1.arm.hand);
   player1.jointAddition(world);
   
   player2 = new Player(new PVector(width - width/1.4, height-300), 5.0, 60, 120, floor, 0, ball);
+  players[3] = player2;
   world.add(player2.object);
   world.add(player2.arm.object);
   world.add(player2.arm.hand);
@@ -61,10 +69,35 @@ void setup() {
   
   PVector leftPos = new PVector(0,-600);
   PVector rightPos = new PVector(width, -600);
-  leftBasket = new Basket(leftPos, 600, false);
-  rightBasket = new Basket(rightPos, 600, true);
+  leftBasket = new Basket(600, false);
+  rightBasket = new Basket(600, true);
   leftTarget = new PVector(leftPos.x, leftPos.y + 70);
-  rightTarget = new PVector(rightPos.x, rightPos.y + 70);
+  rightTarget = new PVector(rightPos.x, rightPos.y + 70); 
+}
+
+
+int checkBasket() {
+  int returnVal = -1;
+  if (ball.pos.dist(leftBasket.position) < 23 && ball.object.getVelocityY() > 0) {
+    println("right scored");
+    returnVal = 1;
+  }
+  if (ball.pos.dist(rightBasket.position) < 23 && ball.object.getVelocityY() > 0) {
+    println("left scored");
+    returnVal = 0;
+  }
+  if (returnVal != -1) {
+    world.remove(world.left); world.remove(world.right); world.remove(world.top); world.remove(world.bottom);
+    world.remove(ball.object);
+    for (Player selectedPlayer : players) {
+      world.remove(selectedPlayer.arm.hand);
+      world.remove(selectedPlayer.arm.object);
+      world.remove(selectedPlayer.object);
+    }
+    creation();
+    world.setEdges(); world.remove(world.top);
+  }
+  return returnVal;
 }
 
 void keyPressed() {
@@ -96,6 +129,7 @@ void draw() {
   player1.updateObject();
   player2.updateObject();
   ball.updateObject();
+  checkBasket();
   fill(150, 150, 150, 100);
   rectMode(CENTER);
   player.draw();
