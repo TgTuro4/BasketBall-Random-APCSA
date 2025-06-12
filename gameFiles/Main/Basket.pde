@@ -13,6 +13,16 @@ class Basket {
     else {
       position = new PVector(50, height - h + 25); 
     }
+    outerBasket = new FCircle(20.0);
+    if (isRight) {
+      outerBasket.setPosition(position.x - 40, position.y - 12);
+    }
+    else {
+      outerBasket.setPosition(position.x + 40, position.y - 12); 
+    }
+    outerBasket.setStatic(true);
+    outerBasket.setRestitution(0.15);
+    outerBasket.setGroupIndex(1);
   }
 
   public void draw() {
@@ -27,6 +37,5 @@ class Basket {
       image(basketImg, 0 , height - h, 100, 100);
     }
     popMatrix();
-    ellipse(position.x, position.y, 20, 20);
   }
 }

@@ -44,12 +44,14 @@ class Arm extends A0ForceObject {
     translate(object.getX(), object.getY());
     rotate(object.getRotation());
     
-    fill(0, 255, 0);
     rectMode(CENTER);
+    if (keyType == 0) {
+       fill(255, 50, 50); 
+    }
+    if (keyType == 1) {
+       fill(50, 50, 255); 
+    }
     rect(0, 0, w * 0.6, armLength);
-    
-    fill(255, 0, 0, 50);
-    ellipse(0, armLength * 0.4, 90, 90);
     
     popMatrix();
   }

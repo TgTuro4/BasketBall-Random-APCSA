@@ -94,6 +94,7 @@ class Player extends A0ForceObject {
       }
       held = ball;
       ball.holdingPlayer = this;
+      ball.object.setVelocity(0,0);
       ball.object.setStatic(true);
       ball.object.setSensor(true);
       ball.object.setPosition(arm.hand.getX(), arm.hand.getY() - 20);
@@ -110,7 +111,6 @@ class Player extends A0ForceObject {
   
   public void shoot(PVector target) {
     if ((held != null)) {
-      print("threw");
       ball.holdingPlayer = null;
       held.object.setStatic(false);
       held.object.setSensor(false);
@@ -132,15 +132,19 @@ class Player extends A0ForceObject {
     translate(pos.x, pos.y);
     rotate(object.getRotation());
      
-    fill(0, 0, 255, 150); //torso
+    if (keyType == 0) {
+       fill(255, 120, 120); 
+    }
+    if (keyType == 1) {
+       fill(120, 120, 255); 
+    }
     rect(0, -h * 0.4, w * 0.5, h * 0.8); // prev 0.8 w
-    
+    ellipse(0, -h * 0.9, w * 0.51, w * 0.51);  
+  
     if (grounded()) fill(200, 200, 255, 150);//base prev 0.81
     if (!grounded()) fill(255, 100, 100, 200);
     ellipse(0, 0, w * 0.51, w * 0.51);
     
-    fill(180, 180, 240, 200); // head prev 0.9
-    ellipse(0, -h * 0.9, w * 0.51, w * 0.51);
     
     popMatrix();
     arm.draw();

@@ -1,5 +1,5 @@
 class Ball extends A0ForceObject {
-  float radius;
+  float radius; //<>//
   Player holdingPlayer;
   int time = millis();
   public Ball(PVector position, float radius) {
@@ -9,7 +9,7 @@ class Ball extends A0ForceObject {
     object.setPosition(position.x, position.y);
     object.setRestitution(0.6);
     object.setFriction(0.2);
-    object.setGroupIndex(1);
+    object.setGroupIndex(-1);
   }
 
   public void updateDensity(float mass) {
@@ -18,7 +18,9 @@ class Ball extends A0ForceObject {
 
   public void updateObject() {
     copyPhysicalState();
-    //println(holdingPlayer);
+    if (object.getY() < -40) {
+       reset(); 
+    }
   }
   public void draw() {
      fill(100, 30, 30);

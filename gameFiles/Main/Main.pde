@@ -5,11 +5,11 @@ Game game;
 Player[] players = new Player[4];
 Ball ball;
 public boolean[] keyTracker = new boolean[2];
-FBox floor;
-Basket leftBasket, rightBasket;
-Setting setting;
-PVector leftPos, leftTarget;
-PVector rightPos, rightTarget;
+private FBox floor;
+private Basket leftBasket, rightBasket;
+private Setting setting;
+private PVector leftPos, leftTarget;
+private PVector rightPos, rightTarget;
 float heightChanger = 0;
 int cur;
 
@@ -19,7 +19,7 @@ void setup() {
 
   world = new FWorld();
   world.setGravity(0, 1000);
-  world.setGrabbable(false);
+  world.setGrabbable(true);
 
   game = new Game(players, world);
   
@@ -61,12 +61,15 @@ void creation() {
     players[i].jointAddition(world);
   }
   
-  PVector leftPos = new PVector(0,-600 + heightChanger);
-  PVector rightPos = new PVector(width, -600 + heightChanger);
-  leftBasket = new Basket(600 + heightChanger, false);
-  rightBasket = new Basket(600 + heightChanger, true);
+  leftPos = new PVector(0,-550 + heightChanger);
+  rightPos = new PVector(width, -550 + heightChanger);
+  leftBasket = new Basket(550 + heightChanger, false);
+  rightBasket = new Basket(550 + heightChanger, true);
+  world.add(leftBasket.outerBasket);
+  world.add(rightBasket.outerBasket);
   leftTarget = new PVector(leftPos.x, leftPos.y + 70);
   rightTarget = new PVector(rightPos.x, rightPos.y + 70);
+  
 
   game.reset();
 }
@@ -74,6 +77,7 @@ void creation() {
 void reset() {
   world.remove(world.left); world.remove(world.right); world.remove(world.top); world.remove(world.bottom);
   world.remove(ball.object);
+  world.remove(leftBasket.outerBasket); world.remove(rightBasket.outerBasket);
   for (Player selectedPlayer : players) {
     world.remove(selectedPlayer.arm.hand);
     world.remove(selectedPlayer.arm.object);
@@ -89,11 +93,11 @@ void reset() {
 
 void checkBasket() {
   int returnVal = -1;
-  if (ball.pos.dist(leftBasket.position) < 23 && ball.object.getVelocityY() > 0) {
+  if (ball.pos.dist(leftBasket.position) < 27 && ball.object.getVelocityY() > 0) {
     println("right scored");
     returnVal = 1;
   }
-  if (ball.pos.dist(rightBasket.position) < 23 && ball.object.getVelocityY() > 0) {
+  if (ball.pos.dist(rightBasket.position) < 27 && ball.object.getVelocityY() > 0) {
     println("left scored");
     returnVal = 0;
   }
