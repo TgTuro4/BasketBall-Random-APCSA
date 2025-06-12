@@ -19,6 +19,7 @@ void setup() {
 
   world = new FWorld();
   world.setGravity(0, 1000);
+  world.setGrabbable(false);
 
   game = new Game(players, world);
   
@@ -150,10 +151,24 @@ void draw() {
   text("Active Modifications: " + game.mod, 10, 40);
 
   if (millis() - cur < 3000) {
+    if (game.score[0] >= 5 || game.score[1] >= 5) {
+      background(0, 0, 0);
+      fill(0, 0, 0, 150);
+      rect(width/2, height/2, width, height);
+      fill(255);
+      textSize(64);
+      textAlign(CENTER, CENTER);
+      text("Game Over", width/2, height/2 - 50);
+      text("Final Score: " + game.score[0] + " - " + game.score[1], width/2, height/2 + 50);
+    } else {
     background(0, 0, 0);
     fill(255, 0, 0, 100);
     textSize(64);
     textAlign(CENTER, CENTER);
     text("Score: " + game.score[0] + " - " + game.score[1], width/2, height/2);
+    }
+  } else if (game.score[0] >= 5 || game.score[1] >= 5) {
+    game.score[0] = 0;
+    game.score[1] = 0;
   }
 }
