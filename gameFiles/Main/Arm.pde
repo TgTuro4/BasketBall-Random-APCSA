@@ -5,7 +5,7 @@ class Arm extends A0ForceObject {
   boolean swinging;
   int keyType;
   public Arm(Player attachedPlayer, float armLength, float attachX, float attachY) {
-    super(attachedPlayer.pos.copy(), attachedPlayer.mass * 0.2);
+    super(attachedPlayer.pos.copy());
     this.w = attachedPlayer.w * 0.5;
     this.player = attachedPlayer;
     this.armLength = armLength;

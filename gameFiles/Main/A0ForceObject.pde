@@ -2,13 +2,12 @@ import fisica.*;
 abstract class A0ForceObject {
   FBody object; // handles all physics by default
   PVector pos;
-  double mass;
-  public A0ForceObject(PVector position, double mass) {
+  public A0ForceObject(PVector position) {
     this.pos = position.copy();
-    this.mass = mass;
   }
   public void copyPhysicalState() {
     pos.set(object.getX(), object.getY());
+    object.setAllowSleeping(false);
   }
   abstract void draw();
   abstract void updateObject();

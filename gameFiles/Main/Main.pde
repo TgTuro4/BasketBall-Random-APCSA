@@ -2,7 +2,6 @@ import fisica.*;
 
 FWorld world;
 Game game;
-Player player, player0, player1, player2;
 Player[] players = new Player[4];
 Ball ball;
 public boolean[] keyTracker = new boolean[2];
@@ -12,17 +11,16 @@ Setting setting;
 PVector leftPos, leftTarget;
 PVector rightPos, rightTarget;
 float heightChanger = 0;
+int cur;
 
 void setup() {
-  size(1200, 800); // 800 600
+  size(1200, 800);
   Fisica.init(this);
 
   world = new FWorld();
   world.setGravity(0, 1000);
 
-
-  ball = new Ball(new PVector(width/2, 100), 1, 20.0); // ball b4 players
-  game = new Game(players, ball);
+  game = new Game(players, world);
   
   setting = new Setting("../Images/courtBackground.png");
   
@@ -42,35 +40,25 @@ void setup() {
 }
 
 void creation() {
+  ball = new Ball(new PVector(width/2, 100), 20.0);
   world.add(ball.object);
 
-  player = new Player(new PVector(width/1.2, height-300), 5.0, 60, 120, floor, 1, ball);
-  players[0] = player;
-  world.add(player.object);
-  world.add(player.arm.object);
-  world.add(player.arm.hand);
-  player.jointAddition(world);
-  
-  player0 = new Player(new PVector(width/1.4, height-300), 5.0, 60, 120, floor, 1, ball);
-  players[1] = player0;
-  world.add(player0.object);
-  world.add(player0.arm.object);
-  world.add(player0.arm.hand);
-  player0.jointAddition(world);
-  
-  player1 = new Player(new PVector(width - width/1.2, height-300), 5.0, 60, 120, floor, 0, ball);
-  players[2] = player1;
-  world.add(player1.object);
-  world.add(player1.arm.object);
-  world.add(player1.arm.hand);
-  player1.jointAddition(world);
-  
-  player2 = new Player(new PVector(width - width/1.4, height-300), 5.0, 60, 120, floor, 0, ball);
-  players[3] = player2;
-  world.add(player2.object);
-  world.add(player2.arm.object);
-  world.add(player2.arm.hand);
-  player2.jointAddition(world);
+  // Define player positions and teams
+  PVector[] positions = {
+    new PVector(width/1.2, height-300),
+    new PVector(width/1.4, height-300),
+    new PVector(width - width/1.2, height-300),
+    new PVector(width - width/1.4, height-300)
+  };
+  int[] teams = {1, 1, 0, 0};
+
+  for (int i = 0; i < 4; i++) {
+    players[i] = new Player(positions[i], 60, 120, floor, teams[i], ball);
+    world.add(players[i].object);
+    world.add(players[i].arm.object);
+    world.add(players[i].arm.hand);
+    players[i].jointAddition(world);
+  }
   
   PVector leftPos = new PVector(0,-600 + heightChanger);
   PVector rightPos = new PVector(width, -600 + heightChanger);
@@ -78,8 +66,23 @@ void creation() {
   rightBasket = new Basket(600 + heightChanger, true);
   leftTarget = new PVector(leftPos.x, leftPos.y + 70);
   rightTarget = new PVector(rightPos.x, rightPos.y + 70);
-  
-  game.mod.applyMods();
+
+  game.reset();
+}
+
+void reset() {
+  world.remove(world.left); world.remove(world.right); world.remove(world.top); world.remove(world.bottom);
+  world.remove(ball.object);
+  for (Player selectedPlayer : players) {
+    world.remove(selectedPlayer.arm.hand);
+    world.remove(selectedPlayer.arm.object);
+    world.remove(selectedPlayer.object);
+  }
+  creation();
+  world.setEdges();
+  world.remove(world.top);
+
+  cur = millis();
 }
 
 
@@ -94,15 +97,7 @@ void checkBasket() {
     returnVal = 0;
   }
   if (returnVal != -1) {
-    world.remove(world.left); world.remove(world.right); world.remove(world.top); world.remove(world.bottom);
-    world.remove(ball.object);
-    for (Player selectedPlayer : players) {
-      world.remove(selectedPlayer.arm.hand);
-      world.remove(selectedPlayer.arm.object);
-      world.remove(selectedPlayer.object);
-    }
-    creation();
-    world.setEdges();
+    reset();
   }
   game.score(returnVal);
 }
@@ -111,38 +106,39 @@ void keyPressed() {
   if (keyCode == 'w' || keyCode == 'W') {
     keyTracker[0] = true;
   }
-  else if (keyCode == UP || keyCode == UP) {
-    keyTracker[1] = true; 
+  else if (keyCode == UP) {
+    keyTracker[1] = true;
   }
 }
+
 void keyReleased() {
   if (keyCode == 'w' || keyCode == 'W') {
     keyTracker[0] = false;
-    player1.shoot(rightTarget);
-    player2.shoot(rightTarget);
+    players[2].shoot(rightTarget);
+    players[3].shoot(rightTarget);
   }
-  else if (keyCode == UP || keyCode == UP) {
+  else if (keyCode == UP) {
     keyTracker[1] = false; 
-    player.shoot(leftTarget);
-    player0.shoot(leftTarget);
+    players[0].shoot(leftTarget);
+    players[1].shoot(leftTarget);
   }
 }
 
 void draw() {
   setting.draw();
   world.step();
-  player.updateObject();
-  player0.updateObject();
-  player1.updateObject();
-  player2.updateObject();
+
+  for (Player player : players) {
+    player.updateObject();
+  }
   ball.updateObject();
   checkBasket();
   fill(150, 150, 150, 100);
   rectMode(CENTER);
-  player.draw();
-  player0.draw();
-  player1.draw();
-  player2.draw();
+
+  for (Player player : players) {
+    player.draw();
+  }
   ball.draw();
   leftBasket.draw();
   rightBasket.draw();
@@ -152,4 +148,12 @@ void draw() {
   textAlign(LEFT, TOP);
   text("Score: " + game.score[0] + " - " + game.score[1], 10, 10);
   text("Active Modifications: " + game.mod, 10, 40);
+
+  if (millis() - cur < 3000) {
+    background(0, 0, 0);
+    fill(255, 0, 0, 100);
+    textSize(64);
+    textAlign(CENTER, CENTER);
+    text("Score: " + game.score[0] + " - " + game.score[1], width/2, height/2);
+  }
 }

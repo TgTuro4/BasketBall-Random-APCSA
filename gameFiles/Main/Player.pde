@@ -9,8 +9,8 @@ class Player extends A0ForceObject {
   boolean wasGrounded;
   boolean wasPressed;
   int cooldown = 0;
-  public Player(PVector position, double mass, float w, float h, FBox floor, int keyType, Ball ball) {
-    super(position, mass);
+  public Player(PVector position, float w, float h, FBox floor, int keyType, Ball ball) {
+    super(position);
     this.w = w;
     this.h = h;
     this.object = new FCompound();
@@ -22,35 +22,29 @@ class Player extends A0ForceObject {
     
     torso = new FBox(w * 0.5, h * 0.8); // prev 0.8
     torso.setPosition(0, -h * 0.4);
-    torso.setDensity((float)mass * 0.2 / (w * h));
     torso.setFill(0, 0, 255);
     ((FCompound)object).addBody(torso);
     
     base = new FCircle(w * 0.5); //  prev 0.81
     base.setPosition(0, 0);
-    base.setDensity((float)mass * 0.1 / (PI * w * w));
     base.setFriction(0.5);
     ((FCompound)object).addBody(base);
     
     head = new FCircle(w * 0.55); // prev 0.9
     head.setPosition(0, -h * 0.9);
-    head.setDensity((float)mass * 0.1 / (PI * w * w));
     ((FCompound)object).addBody(head);
-
-    for (FBody obj: new FBody[] {torso,base,head}) {
-      obj.setDensity(0);
-    }
     
-    weight = new FBox(w * 2, h * 2); // ** outside of and below the player, heavy to make the player balance. NOTE: balances somewhat slowly when within 30 degrees of standing upright. 0.4 0.4
+    // Center of mass
+    weight = new FBox(w * 2, h * 2);
     weight.setPosition(0, h);
     weight.setDensity(2.0);
     weight.setSensor(true);
     weight.setRestitution(0);
     ((FCompound)object).addBody(weight);
     
-    this.arm = new Arm(this, h * 0.7, 0, -h * 0.8); //
+    this.arm = new Arm(this, h * 0.7, 0, -h * 0.8);
     
-    armJoint = new FRevoluteJoint(this.object, arm.object); //
+    armJoint = new FRevoluteJoint(this.object, arm.object);
     armJoint.setAnchor(this.object.getX(), this.object.getY() + -h * 0.7); // useful values
     armJoint.setEnableLimit(true);
     
@@ -66,11 +60,7 @@ class Player extends A0ForceObject {
     armJoint.setCollideConnected(false);
     armJoint.setMaxMotorTorque(1000);
    
-    // // //
-   
-   
-   // // //
-   object.setGroupIndex(-1);
+    object.setGroupIndex(-1);
     object.setPosition(position.x, position.y);
   }
   
@@ -92,7 +82,7 @@ class Player extends A0ForceObject {
     
       if (!wasGrounded && isGrounded && (abs(object.getRotation()) < 0.8)) {
         float dir = object.getRotation() > 0 ? -1 : 1;
-        object.addTorque(dir * 40000);
+        object.setAngularVelocity(object.getAngularVelocity() + (dir * random(0.3, 0.5))); // fresh landing angular velocity
     }
     
     wasGrounded = isGrounded; // detects if landing is fresh or persistent, applies sway only when fresh.
@@ -114,11 +104,7 @@ class Player extends A0ForceObject {
       held.object.setPosition(arm.hand.getX(), arm.hand.getY() - 20); 
     }
     wasPressed = isPressed;
-    // debug
-    //float d = dist(arm.hand.getX(), arm.hand.getY(), ball.object.getX(), ball.object.getY());
-    //println("Distance to ball:", d);
-    //println(held);
-    //print(held);
+
     arm.updateObject();
   }
   
@@ -138,7 +124,7 @@ class Player extends A0ForceObject {
   }
   
   boolean grounded() {
-    return (object.isTouchingBody(floor)) && (object.getRotation() % (2 * PI) < PI * 1/4) && (object.getRotation() % (2 * PI) > PI * -1/4);
+    return (object.isTouchingBody(floor)) && (abs(object.getRotation()) < PI * 1/3);
   }
   
   void draw() {

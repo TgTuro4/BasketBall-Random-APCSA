@@ -1,31 +1,28 @@
+import fisica.*;
+
 class Modification {
-  private float ballMass, basketHeightChanger, armLengthChanger;
+  private float basketHeightChanger, gravity;
   private String description;
   private Player[] players;
-  private Ball ball;
+  private FWorld world;
 
-  public Modification(Player[] players, Ball ball) {
+  public Modification(Player[] players, FWorld world) {
     this.players = players;
-    this.ball = ball;
+    this.world = world;
     randomizeMods();
   }
 
   public void randomizeMods() {
-    ballMass = random(1.0, 3.5);
-    basketHeightChanger = random(-200, 200);
-    // armLengthChanger = random(0.6,0.8);
-    description = String.format("ball mass: %f\nbasket height change: %f\n arm length: %f", ballMass, basketHeightChanger, armLengthChanger);
+    basketHeightChanger = random(-100, 100);
+    gravity = random(800, 1200);
   }
 
-  public void applyMods() { 
-    // for (Player player: players) {
-    //   player.arm.armLength = player.arm.armLength * armLengthChanger;
-    // }
+  public void applyMods() {
     heightChanger = basketHeightChanger;
-    ball.mass = ballMass;
+    world.setGravity(0, gravity);
   }
 
   public String toString() {
-    return description;
+    return String.format("Gravity: %f\nBasket height change: %f\n", gravity, basketHeightChanger);
   }
 }
