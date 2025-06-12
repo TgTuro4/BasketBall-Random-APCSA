@@ -2,12 +2,9 @@ import fisica.*;
 
 class Modification {
   private float basketHeightChanger, gravity;
-  private String description;
-  private Player[] players;
   private FWorld world;
 
-  public Modification(Player[] players, FWorld world) {
-    this.players = players;
+  public Modification(FWorld world) {
     this.world = world;
     randomizeMods();
   }

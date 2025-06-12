@@ -1,14 +1,13 @@
 class Player extends A0ForceObject {
-  float w, h;
-  Arm arm;
-  FRevoluteJoint armJoint;
-  FCircle base, head, swayPart; FBox weight, torso;
-  FBox floor;
-  Ball held, ball;
-  int keyType;
-  boolean wasGrounded;
-  boolean wasPressed;
-  int cooldown = 0;
+  private float w, h;
+  private Arm arm;
+  private FRevoluteJoint armJoint;
+  private FCircle base, head, swayPart; FBox weight, torso;
+  private FBox floor;
+  private Ball held, ball;
+  private int keyType;
+  private boolean wasGrounded;
+  private int cooldown = 0;
   public Player(PVector position, float w, float h, FBox floor, int keyType, Ball ball) {
     super(position);
     this.w = w;
@@ -104,7 +103,6 @@ class Player extends A0ForceObject {
       ball.object.setSensor(true);
       held.object.setPosition(arm.hand.getX(), arm.hand.getY() - 20); 
     }
-    wasPressed = isPressed;
 
     arm.updateObject();
   }

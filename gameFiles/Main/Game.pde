@@ -4,9 +4,9 @@ class Game {
   public int[] score;
   private Modification mod;
 
-  public Game(Player[] players, FWorld world) {
+  public Game(FWorld world) {
     score = new int[2];
-    mod = new Modification(players, world);
+    mod = new Modification(world);
   }
   
   public void reset() {

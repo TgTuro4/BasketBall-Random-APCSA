@@ -1,9 +1,8 @@
 class Arm extends A0ForceObject {
-  float armLength, w; // angle is handled in radians for all code
-  FCircle hand = new FCircle(90);
-  Player player;
-  boolean swinging;
-  int keyType;
+  private float armLength, w; // angle is handled in radians for all code
+  private FCircle hand = new FCircle(90);
+  private Player player;
+  private int keyType;
   public Arm(Player attachedPlayer, float armLength, float attachX, float attachY) {
     super(attachedPlayer.pos.copy());
     this.w = attachedPlayer.w * 0.5;

@@ -1,5 +1,5 @@
 class Setting {
-  public String bgrImg;
+  private String bgrImg;
 
   public Setting(String img) {
     bgrImg = img;

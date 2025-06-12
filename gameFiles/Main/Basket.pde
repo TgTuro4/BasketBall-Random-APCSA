@@ -1,8 +1,8 @@
 class Basket {
-  float radius, h;
-  FCircle outerBasket;
-  boolean isRight;
-  PVector position;
+  private float h;
+  private FCircle outerBasket;
+  private boolean isRight;
+  private PVector position;
   
   public Basket(float h, boolean isRight) {
     this.h = h;

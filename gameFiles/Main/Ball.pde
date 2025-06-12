@@ -1,7 +1,6 @@
 class Ball extends A0ForceObject {
-  float radius; //<>//
-  Player holdingPlayer;
-  int time = millis();
+  private float radius; //<>//
+  private Player holdingPlayer;
   public Ball(PVector position, float radius) {
     super(position);
     this.radius = radius;

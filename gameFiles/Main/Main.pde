@@ -1,17 +1,17 @@
 import fisica.*;
 
-FWorld world;
-Game game;
+private FWorld world;
+private Game game;
 Player[] players = new Player[4];
-Ball ball;
+private Ball ball;
 public boolean[] keyTracker = new boolean[2];
 private FBox floor;
 private Basket leftBasket, rightBasket;
 private Setting setting;
 private PVector leftPos, leftTarget;
 private PVector rightPos, rightTarget;
-float heightChanger = 0;
-int cur;
+private float heightChanger = 0;
+private int cur;
 
 void setup() {
   size(1200, 800);
@@ -21,7 +21,7 @@ void setup() {
   world.setGravity(0, 1000);
   world.setGrabbable(true);
 
-  game = new Game(players, world);
+  game = new Game(world);
   
   setting = new Setting("../Images/courtBackground.png");
   
@@ -61,10 +61,10 @@ void creation() {
     players[i].jointAddition(world);
   }
   
-  leftPos = new PVector(0,-550 + heightChanger);
-  rightPos = new PVector(width, -550 + heightChanger);
-  leftBasket = new Basket(550 + heightChanger, false);
-  rightBasket = new Basket(550 + heightChanger, true);
+  leftPos = new PVector(0,-500 + heightChanger);
+  rightPos = new PVector(width, -500 + heightChanger);
+  leftBasket = new Basket(500 + heightChanger, false);
+  rightBasket = new Basket(500 + heightChanger, true);
   world.add(leftBasket.outerBasket);
   world.add(rightBasket.outerBasket);
   leftTarget = new PVector(leftPos.x, leftPos.y + 70);
