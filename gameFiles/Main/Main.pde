@@ -19,7 +19,7 @@ void setup() {
 
   world = new FWorld();
   world.setGravity(0, 1000);
-  world.setGrabbable(true);
+  world.setGrabbable(false);
 
   game = new Game(world);
   
